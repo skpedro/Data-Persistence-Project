@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class MainManager : MonoBehaviour
 {
+    public static string name;
+    public static int bScore;
     public Brick BrickPrefab;
     public int LineCount = 6;
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text BestScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -24,7 +28,8 @@ public class MainManager : MonoBehaviour
     {
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
-        
+        LoadData();
+
         int[] pointCountArray = new [] {1,1,2,2,5,5};
         for (int i = 0; i < LineCount; ++i)
         {
@@ -70,7 +75,19 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
+        if (m_Points>bScore)
+        {
+            bScore = m_Points;
+            Save.Instance.Savelid(bScore,name);
+        }
+        Save.Instance.SaveData(name);
+        LoadData();
         m_GameOver = true;
         GameOverText.SetActive(true);
+    }
+    public void LoadData()
+    {
+        Save.Instance.LoadData();
+        BestScoreText.text = $"Best Score : {name} : {bScore}";
     }
 }
